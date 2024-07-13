@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programa de Ventas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2196F3; /* Fondo azul */
+            color: #ffffff; /* Texto blanco */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        main {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #333333; /* Fondo oscuro */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ffffff;
+            text-align: center;
+        }
+        label, input, button, select {
+            display: block;
+            margin-top: 10px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049; /* Verde más oscuro */
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 16px;
+            background-color: #555555; /* Gris oscuro */
+            color: #ffffff; /* Texto blanco */
+        }
+        .product-item {
+            border: 1px solid #666666; /* Borde gris */
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #444444; /* Fondo más oscuro */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-item h3 {
+            color: #ffffff;
+            margin: 0;
+        }
+        .product-item .price {
+            color: #cccccc;
+            font-size: 14px;
+        }
+        .product-item button {
+            width: 48%;
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            cursor: pointer;
+        }
+        .product-item button:hover {
+            background-color: #45a049; /* Verde más oscuro */
+        }
+        .product-item .btn-edit {
+            float: left;
+        }
+        .product-item .btn-delete {
+            float: right;
+        }
+        .total-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .total-section button {
+            padding: 15px;
+            background-color: #f44336; /* Rojo */
+        }
+        .total-section button:hover {
+            background-color: #dd1913; /* Rojo más oscuro */
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Programa de Ventas</h1>
+
+        <label for="product-name">Nombre del Producto:</label>
+        <input type="text" id="product-name" required>
+
+        <label for="product-price">Precio del Producto:</label>
+        <input type="number" id="product-price" step="0.01" required>
+
+        <button type="button" onclick="addProduct()">Agregar Producto</button>
+
+        <label for="product-list">Lista de Productos:</label>
+        <select id="product-list" size="5"></select>
+
+        <div id="product-details" class="product-item" style="display: none;">
+            <h3 id="selected-product-name"></h3>
+            <p class="price">Precio: <span id="selected-product-price"></span></p>
+            <button class="btn-edit" onclick="editProduct()">Editar</button>
+            <button class="btn-delete" onclick="deleteProduct()">Eliminar</button>
+        </div>
+
+        <div class="total-section">
+            <h2>Total a Cobrar:</h2>
+            <p id="total-price">$0.00</p>
+            <button onclick="calculateTotal()">Cobrar Total</button>
+        </div>
+    </main>
+
+    <script>
+        function addProduct() {
+            const productName = document.getElementById('product-name').value;
+            const productPrice = parseFloat(document.getElementById('product-price').value).toFixed(2);
+
+            if (productName && productPrice) {
+                const option = document.createElement('option');
+                option.textContent = productName;
+                option.setAttribute('data-price', productPrice);
+                document.getElementById('product-list').appendChild(option);
+
+                document.getElementById('product-name').value = '';
+                document.getElementById('product-price').value = '';
+
+                option.addEventListener('click', function() {
+                    const selectedProductName = this.textContent;
+                    const selectedProductPrice = this.getAttribute('data-price');
+
+                    document.getElementById('selected-product-name').textContent = selectedProductName;
+                    document.getElementById('selected-product-price').textContent = '$' + selectedProductPrice;
+                    document.getElementById('product-details').style.display = 'block';
+                });
+            }
+        }
+
+        function editProduct() {
+            const productList = document.getElementById('product-list');
+            const selectedIndex = productList.selectedIndex;
+
+            if (selectedIndex !== -1) {
+                const selectedOption = productList.options[selectedIndex];
+                document.getElementById('product-name').value = selectedOption.textContent;
+                document.getElementById('product-price').value = selectedOption.getAttribute('data-price');
+
+                deleteProduct();
+            }
+        }
+
+        function deleteProduct() {
+            const productList = document.getElementById('product-list');
+            const selectedIndex = productList.selectedIndex;
+
+            if (selectedIndex !== -1) {
+                productList.remove(selectedIndex);
+                document.getElementById('product-details').style.display = 'none';
+            }
+        }
+
+        function calculateTotal() {
+            const productList = document.getElementById('product-list');
+            let totalPrice = 0;
+
+            for (let i = 0; i < productList.options.length; i++) {
+                const productPrice = parseFloat(productList.options[i].getAttribute('data-price'));
+                totalPrice += productPrice;
+            }
+
+            document.getElementById('total-price').textContent = '$' + totalPrice.toFixed(2);
+        }
+    </script>
+</body>
+</html>
